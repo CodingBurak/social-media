@@ -1,0 +1,11 @@
+{% extends 'users/base.html' %}
+
+{% block body %}
+this is register page
+<form method ="POST">
+{% csrf_token %}
+{{form.as_p}}
+
+<button type ="submit">Register </button>
+</form>
+{% endblock body %}

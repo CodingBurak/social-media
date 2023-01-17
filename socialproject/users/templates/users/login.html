@@ -1,0 +1,9 @@
+This will contain forms
+<form method ="POST">
+{% csrf_token %}
+{{form.as_p}}
+
+<input type ="submit"/>
+</form>
+
+<p><a href="{% url 'password_reset' %}">Reset Password</a>
