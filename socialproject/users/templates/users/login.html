@@ -1,4 +1,8 @@
-This will contain forms
+
+{% extends 'users/base.html' %}
+
+{% block body %}
+
 <form method ="POST">
 {% csrf_token %}
 {{form.as_p}}
@@ -7,3 +11,5 @@ This will contain forms
 </form>
 
 <p><a href="{% url 'password_reset' %}">Reset Password</a>
+
+  {% endblock  %}

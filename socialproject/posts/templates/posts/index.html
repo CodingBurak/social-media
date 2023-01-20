@@ -1,0 +1,153 @@
+{% extends 'users/base.html' %}
+
+{% block body %}
+{% csrf_token %}
+<h2> All posts by {{request.user}} </h2>
+
+
+<div class="container"><div class="row"><div class="col-md-12"><div id="content" class="content content-full-width">
+<div class="profile-content">
+               <!-- begin tab-content -->
+               <div class="tab-content p-0">
+                  <!-- begin #profile-post tab -->
+                  <div class="tab-pane fade active show" id="profile-post">
+                     <!-- begin timeline -->
+                     <ul class="timeline">
+                      {% for post in  posts%}
+                        <li>
+                           <!-- begin timeline-time -->
+                          
+                           <div class="timeline-time">
+                              <span class="date">today</span>
+                              <span class="time">{{post.created}}</span>
+                           </div>
+                           <!-- end timeline-time -->
+                           <!-- begin timeline-icon -->
+                           <div class="timeline-icon">
+                              <a href="javascript:;">&nbsp;</a>
+                           </div>
+                           <!-- end timeline-icon -->
+                           <!-- begin timeline-body -->
+                           <div class="timeline-body">
+                              <div class="timeline-header">
+                                 <span class="userimage"><img src="{{post.user.profile.image.url}}" alt=""></span>
+                                 <span class="username"><a href="javascript:;">{{post.user.username}}</a> <small></small></span>
+                                 <span class="pull-right text-muted">18 Views</span>
+                              </div>
+                              <div class="timeline-content">
+                                 <p>
+                                    {{post.caption}}
+                                 </p>
+                                 <span class="userimage"><img src="{{post.image.url}}" alt=""></span>
+                              </div>
+                              <div class="timeline-likes">
+                                 <div class="stats-right">
+                                    <span class="stats-text">21 Comments</span>
+                                 </div>
+                                 <div class="stats">
+                                    <span class="fa-stack fa-fw stats-icon">
+                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                    </span>
+                                    <span class="stats-total">{{post.liked_by.count}}</span>
+                                 </div>
+                              </div>
+                              <div class="timeline-footer">
+                                 <a id="{{post.id}}" onClick="like(event)" href="" class="m-r-15 text-inverse-lighter">
+                                  {% if logged_user in post.liked_by.all %}
+                                  <span class="fa-stack fa-fw stats-icon">
+                                    <i class="fa fa-circle fa-stack-2x  text-inverse-lighter"></i>
+                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                  </span></a>
+                                  {% else %}
+                                  <span class="fa-stack fa-fw stats-icon">
+                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                  </span></a>
+                                  {% endif %}
+                                 
+                              </div>
+
+                              {% for comment in post.comments.all  %}
+                              <div class="timeline-comment-box">
+                                <div class="user"><img src="{{comment.user.profile.image.url}}"></div>
+                                <div class="input">
+                                   <div >
+                                    <div class="card-body">
+                                         <p>{{comment.body}}</p>
+                                         <a id="{{comment.id}}" onClick="likecomment(event)" href="" class="m-r-15 text-inverse-lighter">
+                                          {% if logged_user in comment.liked_by.all %}
+                                          <span class="fa-stack fa-fw stats-icon">
+                                            <i class="fa fa-circle fa-stack-2x  text-inverse-lighter"></i>
+                                            <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                          </span></a>
+                                          {% else %}
+                                          <span class="fa-stack fa-fw stats-icon">
+                                            <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                            <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                          </span></a>
+                                          {% endif %}
+                                      </div>
+                                     </div>
+                                    
+                                </div>
+                             </div>
+                              {% endfor %}
+
+                              
+                              <div class="timeline-comment-box">
+                                <div class="user"><img src="{{post.user.profile.image.url}}"></div>
+                                <div class="input">
+                                   <div >
+                                      <div class="input-group">
+                                         <input type="text" id ="comment_input" class="form-control rounded-corner" placeholder="Write a comment...">
+                                         <span class="input-group-btn p-l-10">
+                                         <button class="btn btn-primary f-s-12 rounded-corner" onClick="comment(event, {{post.id}})" type="button">Comment</button>
+                                         </span>
+                                      </div>
+                                     </div>
+                                </div>
+                             </div>
+                           </div>
+                           <!-- end timeline-body -->
+                        </li>
+{% endfor %}
+                  </div></div></div></div>
+
+                  <script>
+                    console.log("script loaded")
+                    function like(event) {
+                      console.log("event", event.target)
+                      post_id = event.target.id
+                      fetch('/posts/like', {
+                        method: 'POST', // or 'PUT'
+                        dataType: 'json',
+                        headers: {
+                          'X-CSRFToken': '{{ csrf_token }}'
+                          
+                        },
+                        body: JSON.stringify({post_id}),
+                      })
+
+                    }
+
+                    function comment(event, post_id) {
+                      console.log("event", event.target)
+
+                      comment_body = document.getElementById("comment_input").value
+                      fetch('/posts/comment', {
+                        method: 'POST', // or 'PUT'
+                        dataType: 'json',
+                        headers: {
+                          'X-CSRFToken': '{{ csrf_token }}'
+                          
+                        },
+                        body: JSON.stringify({post_id, comment_body}),
+                      })
+
+                    }
+
+                  </script>
+
+
+{% endblock body %}

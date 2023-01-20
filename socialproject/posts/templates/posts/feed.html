@@ -6,6 +6,7 @@
 {% for post in  posts%}
   <h2> {{post.title}} </h2>
     <h4> {{post.caption}} </h4>
-    <img src="{{post.image.url}}">
+    <img src="{{post.user.profile.image.url}}">
+    <a>Like</a>
 {% endfor %}
 {% endblock body %}
